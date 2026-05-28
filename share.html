@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Quiz</title>
+<style>
+:root{--bg:#F8FAFC;--surface:#fff;--variant:#F1F5F9;--primary:#6366F1;--text:#0F172A;--sub:#64748B;--red:#EF4444;--green:#22C55E;--border:#E2E8F0}
+@media(prefers-color-scheme:dark){:root{--bg:#0F172A;--surface:#1E293B;--variant:#334155;--primary:#818CF8;--text:#F1F5F9;--sub:#94A3B8;--red:#F87171;--green:#4ADE80;--border:#334155}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased}
+.shell{max-width:480px;margin:0 auto;padding:16px;padding-bottom:max(24px,env(safe-area-inset-bottom))}
+.center{display:flex;align-items:center;justify-content:center;min-height:100dvh}
+.card{background:var(--surface);border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);padding:20px}
+.mb{margin-bottom:12px}
+.ntitle{font-size:20px;font-weight:800;line-height:1.3}
+.nsub{font-size:13px;color:var(--sub);margin-top:4px}
+.ncontent{font-size:14px;line-height:1.7;max-height:140px;overflow:hidden;white-space:pre-wrap}
+.ncontent.expanded{max-height:none}
+.btn-link{background:none;border:none;color:var(--primary);font-size:13px;font-weight:600;cursor:pointer;padding:6px 0;display:block;width:100%}
+.prog-wrap{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.prog-track{flex:1;height:6px;background:var(--variant);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .4s}
+.prog-lbl{font-size:13px;font-weight:600;color:var(--sub);white-space:nowrap}
+.qcard{display:flex;flex-direction:column;gap:14px}
+.qtext{font-size:18px;font-weight:700;line-height:1.4}
+.ans-box{background:rgba(99,102,241,.1);border-radius:12px;padding:16px;font-size:14px;line-height:1.7;white-space:pre-wrap}
+.ans-lbl{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice{text-align:left;padding:14px 16px;border-radius:12px;font-size:14px;font-weight:500;border:1.5px solid var(--border);background:var(--variant);color:var(--text);cursor:pointer;transition:all .2s;width:100%}
+.choice.correct{background:rgba(34,197,94,.12);color:var(--green);border-color:var(--green)}
+.choice.wrong{background:rgba(239,68,68,.12);color:var(--red);border-color:var(--red)}
+.choice:disabled{cursor:default}
+.row2{display:flex;gap:10px}
+.row2>button{flex:1}
+button{border:none;cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;border-radius:14px;padding:14px 20px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s}
+button:active{transform:scale(.97)}
+.btn-primary{background:var(--primary);color:#fff;margin-top:4px}
+.btn-outline{background:transparent;color:var(--sub);border:1.5px solid var(--border)}
+.btn-ok{background:rgba(34,197,94,.12);color:var(--green);border:1.5px solid var(--green)}
+.btn-wrong{background:rgba(239,68,68,.12);color:var(--red);border:1.5px solid var(--red)}
+.btn-store{background:var(--text);color:var(--bg)}
+.scircle{width:140px;height:140px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:10px solid var(--variant);position:relative}
+.divider{border-top:1px solid var(--border)}
+#spinner{display:flex;align-items:center;justify-content:center;min-height:100dvh}
+.spin{width:40px;height:40px;border:4px solid var(--variant);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="spinner"><div class="spin"></div></div>
+<div class="shell" id="app" style="display:none"></div>
+
+<script>
+(function() {
+  var SUPABASE_URL = 'https://lvpnitxehagoknqesryf.supabase.co'
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2cG5pdHhlaGFnb2tucWVzcnlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2OTM4NTksImV4cCI6MjA5MDI2OTg1OX0.7owRNtMPRU1_v9E6fgPgN8F4TvQ6XAKKtbKlMRxAAPc'
+  var APP_STORE_URL  = 'https://apps.apple.com/app/idXXXXXXXXX'
+  var PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.memoory.app'
+
+  var spinner = document.getElementById('spinner')
+  var app     = document.getElementById('app')
+  var token   = new URLSearchParams(window.location.search).get('token')
+
+  function show(html) { app.innerHTML = html; spinner.style.display = 'none'; app.style.display = '' }
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  }
+
+  if (!token) { show(page404()); return }
+
+  fetch(SUPABASE_URL + '/rest/v1/rpc/get_shared_quiz', {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_share_token: token })
+  })
+  .then(function(r) { return r.json() })
+  .then(function(data) {
+    if (!data || !data.questions) { show(page404()); return }
+    var title = data.title && data.title.trim()
+      ? data.title
+      : (data.content || '').trim().slice(0, 50) + ((data.content || '').length > 50 ? '…' : '')
+    startQuiz(title, data.content || '', data.questions || [])
+  })
+  .catch(function() { show(page404()) })
+
+  // ── Quiz engine ──────────────────────────────────────────────────────────────
+
+  function startQuiz(title, noteContent, questions) {
+    var correct = 0
+    var isIOS   = /iPad|iPhone|iPod/.test(navigator.userAgent)
+
+    function showIntro() {
+      var expanded = false
+      show(
+        '<div class="card mb"><div class="ntitle">' + esc(title) + '</div>'
+        + '<div class="nsub">' + questions.length + ' question' + (questions.length !== 1 ? 's' : '') + '</div></div>'
+        + '<div class="card mb"><div id="nc" class="ncontent">' + esc(noteContent) + '</div>'
+        + '<button class="btn-link" id="tg">Voir plus</button></div>'
+        + '<button class="btn-primary" id="start">&#9654;&#xFE0E;  Commencer le quiz</button>'
+      )
+      document.getElementById('start').onclick = function() { showQ(0) }
+      document.getElementById('tg').onclick = function() {
+        expanded = !expanded
+        document.getElementById('nc').className = 'ncontent' + (expanded ? ' expanded' : '')
+        document.getElementById('tg').textContent = expanded ? 'Voir moins' : 'Voir plus'
+      }
+    }
+
+    function showQ(i) {
+      var q   = questions[i]
+      var pct = Math.round(i / questions.length * 100)
+      var isMcq = q.questionType === 'MCQ'
+
+      var choicesHtml = ''
+      if (isMcq) {
+        choicesHtml = '<div class="choices" id="choices">'
+        for (var ci = 0; ci < q.mcqChoices.length; ci++) {
+          choicesHtml += '<button class="choice" data-i="' + ci + '" data-ok="' + (ci === q.mcqCorrectIndex ? '1' : '0') + '">' + esc(q.mcqChoices[ci]) + '</button>'
+        }
+        choicesHtml += '</div>'
+      }
+
+      show(
+        '<div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:' + pct + '%"></div></div>'
+        + '<span class="prog-lbl">' + (i + 1) + '/' + questions.length + '</span></div>'
+        + '<div class="card qcard"><p class="qtext">' + esc(q.questionText) + '</p>'
+        + choicesHtml
+        + '</div>'
+        + (isMcq ? '' : '<div id="actions"><button class="btn-primary" id="reveal">&#128065;  Voir la réponse</button></div>')
+      )
+
+      if (isMcq) {
+        document.querySelectorAll('.choice').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var isOk = btn.getAttribute('data-ok') === '1'
+            document.querySelectorAll('.choice').forEach(function(b) {
+              b.setAttribute('disabled', 'true')
+              if (b.getAttribute('data-ok') === '1') b.className = 'choice correct'
+              else if (b === btn && !isOk) b.className = 'choice wrong'
+            })
+            setTimeout(function() { next(i, isOk) }, 1100)
+          })
+        })
+      } else {
+        document.getElementById('reveal').onclick = function() {
+          var ans = q.answerExcerpt || '(voir la note)'
+          document.getElementById('actions').innerHTML =
+            '<div class="ans-box"><div class="ans-lbl">Réponse</div>' + esc(ans) + '</div>'
+            + '<div class="row2">'
+            + '<button class="btn-wrong" id="bw">&#10007;  Je ne savais pas</button>'
+            + '<button class="btn-ok"    id="bo">&#10003;  Je savais</button>'
+            + '</div>'
+          document.getElementById('bw').onclick = function() { next(i, false) }
+          document.getElementById('bo').onclick = function() { next(i, true) }
+        }
+      }
+    }
+
+    function next(i, wasOk) {
+      if (wasOk) correct++
+      if (i + 1 < questions.length) showQ(i + 1)
+      else showResults()
+    }
+
+    function showResults() {
+      var total = questions.length
+      var pct   = total > 0 ? Math.round(correct * 100 / total) : 0
+      var color = pct >= 80 ? 'var(--green)' : pct >= 50 ? '#F59E0B' : 'var(--red)'
+      var title = pct >= 80 ? '&#127881; Excellent !' : pct >= 50 ? '&#128077; Bien joué !' : '&#128170; Continue !'
+      var sub   = pct >= 80 ? 'Tu maîtrises vraiment bien ce sujet.'
+                : pct >= 50 ? 'Encore un peu de pratique et tu seras au top.'
+                : "Reviens t'entraîner, tu vas y arriver !"
+      var r = 54, c = 2 * Math.PI * r, f = c * (pct / 100)
+      var svg = '<svg width="160" height="160" viewBox="0 0 160 160" style="position:absolute;top:-10px;left:-10px">'
+        + '<circle cx="80" cy="80" r="' + r + '" fill="none" stroke="var(--variant)" stroke-width="10"/>'
+        + '<circle cx="80" cy="80" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="10"'
+        + ' stroke-dasharray="' + f + ' ' + (c - f) + '" stroke-dashoffset="' + (c * 0.25) + '"'
+        + ' stroke-linecap="round" transform="rotate(-90 80 80)"/></svg>'
+      var storeUrl = isIOS ? APP_STORE_URL : PLAY_STORE_URL
+      var storeLbl = isIOS ? 'App Store' : 'Google Play'
+
+      show(
+        '<div style="display:flex;justify-content:center;margin:8px 0">'
+        + '<div class="scircle"><div style="position:relative">' + svg
+        + '<div style="font-size:26px;font-weight:800;color:' + color + '">' + correct + '/' + total + '</div>'
+        + '<div style="font-size:13px;font-weight:600;color:' + color + '">' + pct + '%</div>'
+        + '</div></div></div>'
+        + '<h2 style="text-align:center;margin:12px 0 4px">' + title + '</h2>'
+        + '<p style="text-align:center;color:var(--sub);font-size:14px;margin-bottom:20px">' + esc(sub) + '</p>'
+        + '<button class="btn-outline" id="replay">&#8635;  Rejouer</button>'
+        + '<div class="divider" style="margin:20px 0"></div>'
+        + '<p style="text-align:center;color:var(--sub);font-size:13px;margin-bottom:12px">Envie de t\'entraîner encore plus ?</p>'
+        + '<button class="btn-store" id="store">Télécharger l\'app — ' + storeLbl + '</button>'
+      )
+      document.getElementById('replay').onclick = function() { correct = 0; showQ(0) }
+      document.getElementById('store').onclick  = function() { window.open(storeUrl, '_blank') }
+    }
+
+    if (questions.length === 0) {
+      show('<div class="card" style="text-align:center;padding:32px 20px"><div style="font-size:40px">&#128221;</div><h2 style="margin-top:12px">Aucune question</h2></div>')
+    } else {
+      showIntro()
+    }
+  }
+
+  function page404() {
+    return '<div class="center"><div class="card" style="text-align:center;padding:40px 24px">'
+      + '<div style="font-size:48px;margin-bottom:16px">&#128269;</div>'
+      + '<h2>Quiz introuvable</h2>'
+      + '<p style="color:var(--sub);margin-top:8px;font-size:14px">Ce lien n\'est plus valide ou a été désactivé.</p>'
+      + '</div></div>'
+  }
+
+})()
+</script>
+</body>
+</html>
