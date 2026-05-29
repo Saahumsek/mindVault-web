@@ -30,10 +30,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .prog-track{flex:1;height:6px;background:var(--variant);border-radius:3px;overflow:hidden}
 .prog-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .4s}
 .prog-lbl{font-size:13px;font-weight:600;color:var(--sub);white-space:nowrap}
-.qcard{display:flex;flex-direction:column;gap:14px}
+.qcard{display:flex;flex-direction:column;gap:14px;border:1.5px solid var(--primary)}
+.qlabel{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px}
 .qtext{font-size:18px;font-weight:700;line-height:1.4}
 .ans-box{background:rgba(99,102,241,.1);border-radius:12px;padding:16px;font-size:14px;line-height:1.7;white-space:pre-wrap}
 .ans-lbl{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.actions-wrap{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 .choices{display:flex;flex-direction:column;gap:10px}
 .choice{text-align:left;padding:14px 16px;border-radius:12px;font-size:14px;font-weight:500;border:1.5px solid var(--border);background:var(--variant);color:var(--text);cursor:pointer;transition:all .2s;width:100%}
 .choice.correct{background:rgba(34,197,94,.12);color:var(--green);border-color:var(--green)}
@@ -122,7 +124,7 @@ button:active{transform:scale(.97)}
 
     function showQ(i) {
       var q   = questions[i]
-      var pct = Math.round(i / questions.length * 100)
+      var pct = Math.round((i + 1) / questions.length * 100)
       var isMcq = q.questionType === 'MCQ'
 
       var choicesHtml = ''
@@ -137,10 +139,10 @@ button:active{transform:scale(.97)}
       show(
         '<div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:' + pct + '%"></div></div>'
         + '<span class="prog-lbl">' + (i + 1) + '/' + questions.length + '</span></div>'
-        + '<div class="card qcard"><p class="qtext">' + esc(q.questionText) + '</p>'
+        + '<div class="card qcard"><div class="qlabel">Question</div><p class="qtext">' + esc(q.questionText) + '</p>'
         + choicesHtml
         + '</div>'
-        + (isMcq ? '' : '<div id="actions"><button class="btn-primary" id="reveal">Afficher la réponse</button></div>')
+        + (isMcq ? '' : '<div id="actions" class="actions-wrap"><button class="btn-primary" id="reveal">Afficher la réponse</button></div>')
       )
 
       if (isMcq) {
@@ -160,7 +162,7 @@ button:active{transform:scale(.97)}
           var ans = q.answerExcerpt || '(voir la note)'
           document.getElementById('actions').innerHTML =
             '<div class="ans-box"><div class="ans-lbl">Réponse</div>' + esc(ans) + '</div>'
-            + '<div class="row2">'
+            + '<div class="row2" style="margin-top:4px">'
             + '<button class="btn-wrong" id="bw">&#10007;  Je ne savais pas</button>'
             + '<button class="btn-ok"    id="bo">&#10003;  Je savais</button>'
             + '</div>'
