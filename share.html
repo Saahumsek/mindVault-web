@@ -102,7 +102,11 @@ button:active{transform:scale(.97)}
     function showIntro() {
       var expanded = false
       show(
-        '<div class="card mb"><div class="ntitle">' + esc(title) + '</div>'
+        '<div style="display:flex;flex-direction:column;align-items:center;padding:32px 0 20px">'
+        + '<div style="width:72px;height:72px;border-radius:18px;background:#5B52E8;flex-shrink:0"></div>'
+        + '<div style="margin-top:12px;font-size:24px;font-weight:700;color:var(--primary)">Memoory</div>'
+        + '</div>'
+        + '<div class="card mb"><div class="ntitle">' + esc(title) + '</div>'
         + '<div class="nsub">' + questions.length + ' question' + (questions.length !== 1 ? 's' : '') + '</div></div>'
         + '<div class="card mb"><div id="nc" class="ncontent">' + esc(noteContent) + '</div>'
         + '<button class="btn-link" id="tg">Voir plus</button></div>'
@@ -136,7 +140,7 @@ button:active{transform:scale(.97)}
         + '<div class="card qcard"><p class="qtext">' + esc(q.questionText) + '</p>'
         + choicesHtml
         + '</div>'
-        + (isMcq ? '' : '<div id="actions"><button class="btn-primary" id="reveal">&#128065;  Voir la réponse</button></div>')
+        + (isMcq ? '' : '<div id="actions"><button class="btn-primary" id="reveal">Afficher la réponse</button></div>')
       )
 
       if (isMcq) {
