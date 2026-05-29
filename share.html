@@ -23,38 +23,47 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .mb{margin-bottom:12px}
 .ntitle{font-size:20px;font-weight:800;line-height:1.3}
 .nsub{font-size:13px;color:var(--sub);margin-top:4px}
-.ncontent{font-size:14px;line-height:1.7;max-height:140px;overflow:hidden;white-space:pre-wrap}
+.ncontent{font-size:14px;line-height:1.7;max-height:240px;overflow:hidden;white-space:pre-wrap}
 .ncontent.expanded{max-height:none}
-.btn-link{background:none;border:none;color:var(--primary);font-size:13px;font-weight:600;cursor:pointer;padding:6px 0;display:block;width:100%}
-.prog-wrap{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.btn-link{background:none;border:none;color:var(--primary);font-size:13px;font-weight:600;cursor:pointer;padding:6px 0;display:block;width:100%;text-align:center}
+.prog-wrap{display:flex;align-items:center}
 .prog-track{flex:1;height:6px;background:var(--variant);border-radius:3px;overflow:hidden}
 .prog-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .4s}
-.prog-lbl{font-size:13px;font-weight:600;color:var(--sub);white-space:nowrap}
-.qcard{display:flex;flex-direction:column;gap:14px;border:1.5px solid var(--primary)}
-.qlabel{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px}
+.qlabel{font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.5px}
 .qtext{font-size:18px;font-weight:700;line-height:1.4}
-.ans-box{background:rgba(99,102,241,.1);border-radius:12px;padding:16px;font-size:14px;line-height:1.7;white-space:pre-wrap}
-.ans-lbl{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.actions-wrap{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 .choices{display:flex;flex-direction:column;gap:10px}
-.choice{text-align:left;padding:14px 16px;border-radius:12px;font-size:14px;font-weight:500;border:1.5px solid var(--border);background:var(--variant);color:var(--text);cursor:pointer;transition:all .2s;width:100%}
-.choice.correct{background:rgba(34,197,94,.12);color:var(--green);border-color:var(--green)}
-.choice.wrong{background:rgba(239,68,68,.12);color:var(--red);border-color:var(--red)}
-.choice:disabled{cursor:default}
+.choice{text-align:left;padding:14px 16px;border-radius:12px;font-size:14px;font-weight:500;border:1.5px solid rgba(99,102,241,.3);background:rgba(99,102,241,.08);color:var(--text);cursor:pointer;transition:all .2s;width:100%}
+button:disabled{opacity:.4;cursor:default}
+.note-lbl{font-size:12px;font-weight:500;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px}
+.choice.correct{background:rgba(34,197,94,.12);color:var(--green);border-color:var(--green);opacity:1}
+.choice.wrong{background:rgba(239,68,68,.12);color:var(--red);border-color:var(--red);opacity:1}
 .row2{display:flex;gap:10px}
 .row2>button{flex:1}
 button{border:none;cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;border-radius:14px;padding:14px 20px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s}
 button:active{transform:scale(.97)}
-.btn-primary{background:var(--primary);color:#fff;margin-top:4px}
+.btn-primary{background:var(--primary);color:#fff}
 .btn-outline{background:transparent;color:var(--sub);border:1.5px solid var(--border)}
 .btn-ok{background:rgba(34,197,94,.12);color:var(--green);border:1.5px solid var(--green)}
 .btn-wrong{background:rgba(239,68,68,.12);color:var(--red);border:1.5px solid var(--red)}
-.btn-store{background:var(--text);color:var(--bg)}
-.scircle{width:140px;height:140px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:10px solid var(--variant);position:relative}
+.scircle{width:140px;height:140px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
 .divider{border-top:1px solid var(--border)}
 #spinner{display:flex;align-items:center;justify-content:center;min-height:100dvh}
 .spin{width:40px;height:40px;border:4px solid var(--variant);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* Full-screen quiz question layout */
+.qpage{position:fixed;inset:0;background:var(--bg);display:flex;justify-content:center;z-index:50}
+.qpage-inner{width:100%;max-width:480px;display:flex;flex-direction:column;padding:max(env(safe-area-inset-top,0px),16px) 16px max(env(safe-area-inset-bottom,0px),16px);gap:10px}
+/* Flip card */
+.flip-wrap{flex:1;position:relative;min-height:0;perspective:1200px}
+.flip-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}
+.flip-inner.flipped{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;gap:14px;padding:20px;border-radius:20px;background:var(--surface);border:1.5px solid var(--primary);box-shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);overflow:hidden}
+.flip-back{transform:rotateY(180deg);background:rgba(99,102,241,.06)}
+/* MCQ card in full-screen layout */
+.mcq-card{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding:20px;border-radius:20px;background:var(--surface);border:1.5px solid var(--primary);box-shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05)}
+/* Full note modal */
+.note-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;overflow-y:auto}
+.note-modal-box{background:var(--surface);border-radius:20px;padding:20px;max-width:480px;width:calc(100% - 32px);margin:max(env(safe-area-inset-top,0px),24px) auto 24px}
 </style>
 </head>
 <body>
@@ -98,13 +107,18 @@ button:active{transform:scale(.97)}
   // ── Quiz engine ──────────────────────────────────────────────────────────────
 
   function startQuiz(title, noteContent, questions) {
-    var correct = 0
-    var isIOS   = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    var correct  = 0
+    var isIOS    = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    var storeUrl = isIOS ? APP_STORE_URL : PLAY_STORE_URL
+
+    var noteIconSvg = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
 
     function showIntro() {
+      document.body.style.overflow = ''
       var expanded = false
       show(
-        '<div style="display:flex;flex-direction:column;align-items:center;padding:32px 0 20px">'
+        '<div style="display:flex;flex-direction:column;min-height:calc(100dvh - 48px)">'
+        + '<div style="display:flex;flex-direction:column;align-items:center;padding:32px 0 20px">'
         + '<img src="/logo.png" alt="Memoory" style="width:72px;height:72px;border-radius:18px;object-fit:cover;flex-shrink:0">'
         + '<div style="margin-top:12px;font-size:24px;font-weight:700;color:var(--primary)">Memoory</div>'
         + '</div>'
@@ -112,7 +126,11 @@ button:active{transform:scale(.97)}
         + '<div class="nsub">' + questions.length + ' question' + (questions.length !== 1 ? 's' : '') + '</div></div>'
         + '<div class="card mb"><div id="nc" class="ncontent">' + esc(noteContent) + '</div>'
         + '<button class="btn-link" id="tg">Voir plus</button></div>'
-        + '<button class="btn-primary" id="start">&#9654;&#xFE0E;  Commencer le quiz</button>'
+        + '<button class="btn-primary" id="start" style="margin-top:auto">&#9654;&#xFE0E;  Commencer le quiz</button>'
+        + '<div style="text-align:right;padding-top:14px">'
+        + '<a href="' + storeUrl + '" target="_blank" style="color:var(--primary);font-size:13px;font-weight:600;text-decoration:none">Télécharger Memoory</a>'
+        + '</div>'
+        + '</div>'
       )
       document.getElementById('start').onclick = function() { showQ(0) }
       document.getElementById('tg').onclick = function() {
@@ -123,51 +141,146 @@ button:active{transform:scale(.97)}
     }
 
     function showQ(i) {
-      var q   = questions[i]
-      var pct = Math.round((i + 1) / questions.length * 100)
+      var q     = questions[i]
+      var pct   = Math.round((i + 1) / questions.length * 100)
       var isMcq = q.questionType === 'MCQ'
+      document.body.style.overflow = 'hidden'
 
-      var choicesHtml = ''
+      var headerHtml =
+        '<div style="display:flex;align-items:center;justify-content:center;gap:8px">'
+        + '<img src="/logo.png" alt="Memoory" style="width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0">'
+        + '<span style="font-size:15px;font-weight:700;color:var(--primary)">Memoory</span>'
+        + '</div>'
+        + '<div><span style="font-size:13px;font-weight:500;color:var(--sub)">Question ' + (i + 1) + ' / ' + questions.length + '</span></div>'
+        + '<div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:' + pct + '%"></div></div></div>'
+        + '<div class="note-lbl">' + noteIconSvg + esc(title) + '</div>'
+
+      var mainHtml, actionsHtml
+
       if (isMcq) {
-        choicesHtml = '<div class="choices" id="choices">'
+        var choicesHtml = '<div class="choices">'
         for (var ci = 0; ci < q.mcqChoices.length; ci++) {
-          choicesHtml += '<button class="choice" data-i="' + ci + '" data-ok="' + (ci === q.mcqCorrectIndex ? '1' : '0') + '">' + esc(q.mcqChoices[ci]) + '</button>'
+          choicesHtml += '<button class="choice" data-ok="' + (ci === q.mcqCorrectIndex ? '1' : '0') + '">'
+            + esc(q.mcqChoices[ci]) + '</button>'
         }
         choicesHtml += '</div>'
+
+        mainHtml =
+          '<div class="mcq-card">'
+          + '<div class="qlabel">🎯 QCM</div>'
+          + '<div style="flex:1;display:flex;align-items:center;justify-content:center;overflow-y:auto">'
+          + '<p class="qtext" style="text-align:center">' + esc(q.questionText) + '</p>'
+          + '</div>'
+          + choicesHtml
+          + '</div>'
+
+        actionsHtml = '<button class="btn-primary" id="mcq-next" disabled>Continuer</button>'
+
+      } else {
+        var ans = q.answerExcerpt || noteContent
+
+        mainHtml =
+          '<div class="flip-wrap">'
+          + '<div class="flip-inner" id="flipper">'
+
+          // ── Front: question ──
+          + '<div class="flip-face">'
+          + '<div class="qlabel">Question</div>'
+          + '<div style="flex:1;display:flex;align-items:center;justify-content:center;overflow-y:auto">'
+          + '<p class="qtext" style="text-align:center">' + esc(q.questionText) + '</p>'
+          + '</div>'
+          + '</div>'
+
+          // ── Back: answer ──
+          + '<div class="flip-face flip-back">'
+          + '<div class="qlabel">Réponse</div>'
+          + '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-y:auto;gap:14px">'
+          + '<p class="qtext" style="text-align:center;white-space:pre-wrap">' + esc(ans) + '</p>'
+          + '<button id="full-note" style="background:none;border:none;cursor:pointer;color:var(--primary);font-size:13px;font-weight:600;font-family:inherit;padding:0;width:auto;margin-top:10px">Voir la note complète</button>'
+          + '</div>'
+          + '</div>'
+
+          + '</div>'
+          + '</div>'
+
+        actionsHtml = '<button class="btn-primary" id="reveal">Afficher la réponse</button>'
       }
 
-      show(
-        '<div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:' + pct + '%"></div></div>'
-        + '<span class="prog-lbl">' + (i + 1) + '/' + questions.length + '</span></div>'
-        + '<div class="card qcard"><div class="qlabel">Question</div><p class="qtext">' + esc(q.questionText) + '</p>'
-        + choicesHtml
+      var modalHtml =
+        '<div id="note-modal" class="note-modal">'
+        + '<div class="note-modal-box">'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+        + '<span style="font-size:16px;font-weight:700">Note complète</span>'
+        + '<button id="close-x" style="width:auto;padding:4px;background:none;border:none;cursor:pointer;font-size:20px;line-height:1;color:var(--sub)">&#10005;</button>'
         + '</div>'
-        + (isMcq ? '' : '<div id="actions" class="actions-wrap"><button class="btn-primary" id="reveal">Afficher la réponse</button></div>')
+        + '<div style="border-top:1px solid var(--border);padding-top:14px;padding-bottom:14px">'
+        + '<p style="font-size:14px;line-height:1.7;white-space:pre-wrap">' + esc(noteContent) + '</p>'
+        + '</div>'
+        + '<div style="border-top:1px solid var(--border);padding-top:14px">'
+        + '<button id="close-btn" class="btn-primary">Fermer</button>'
+        + '</div>'
+        + '</div>'
+        + '</div>'
+
+      var dlLink = '<div style="text-align:right;padding-top:4px">'
+        + '<a href="' + storeUrl + '" target="_blank" style="color:var(--primary);font-size:13px;font-weight:600;text-decoration:none">Télécharger Memoory</a>'
+        + '</div>'
+
+      show(
+        '<div class="qpage"><div class="qpage-inner">'
+        + headerHtml
+        + mainHtml
+        + '<div id="actions">' + actionsHtml + '</div>'
+        + dlLink
+        + '</div></div>'
+        + modalHtml
       )
 
       if (isMcq) {
+        var mcqResult = null
+        var nextBtn = document.getElementById('mcq-next')
         document.querySelectorAll('.choice').forEach(function(btn) {
           btn.addEventListener('click', function() {
+            if (mcqResult !== null) return
             var isOk = btn.getAttribute('data-ok') === '1'
+            mcqResult = isOk
             document.querySelectorAll('.choice').forEach(function(b) {
-              b.setAttribute('disabled', 'true')
+              b.setAttribute('disabled', '')
               if (b.getAttribute('data-ok') === '1') b.className = 'choice correct'
               else if (b === btn && !isOk) b.className = 'choice wrong'
             })
-            setTimeout(function() { next(i, isOk) }, 1100)
+            nextBtn.removeAttribute('disabled')
           })
         })
+        nextBtn.addEventListener('click', function() { next(i, mcqResult) })
+
       } else {
+        var revealed = false
+
         document.getElementById('reveal').onclick = function() {
-          var ans = q.answerExcerpt || '(voir la note)'
+          if (revealed) return
+          revealed = true
+          document.getElementById('flipper').classList.add('flipped')
           document.getElementById('actions').innerHTML =
-            '<div class="ans-box"><div class="ans-lbl">Réponse</div>' + esc(ans) + '</div>'
-            + '<div class="row2" style="margin-top:4px">'
-            + '<button class="btn-wrong" id="bw">&#10007;  Je ne savais pas</button>'
-            + '<button class="btn-ok"    id="bo">&#10003;  Je savais</button>'
+            '<div class="row2">'
+            + '<button class="btn-wrong" id="bw">&#10007;  J\'avais oublié</button>'
+            + '<button class="btn-ok"    id="bo">&#10003;  J\'avais la réponse</button>'
             + '</div>'
           document.getElementById('bw').onclick = function() { next(i, false) }
           document.getElementById('bo').onclick = function() { next(i, true) }
+        }
+
+        document.getElementById('full-note').onclick = function() {
+          document.getElementById('note-modal').style.display = 'block'
+        }
+        document.getElementById('note-modal').onclick = function(e) {
+          if (e.target === this) this.style.display = 'none'
+        }
+        document.getElementById('close-x').onclick = function() {
+          document.getElementById('note-modal').style.display = 'none'
+        }
+        document.getElementById('close-btn').onclick = function() {
+          document.getElementById('note-modal').style.display = 'none'
         }
       }
     }
@@ -179,13 +292,14 @@ button:active{transform:scale(.97)}
     }
 
     function showResults() {
-      var total = questions.length
-      var pct   = total > 0 ? Math.round(correct * 100 / total) : 0
-      var color = pct >= 80 ? 'var(--green)' : pct >= 50 ? '#F59E0B' : 'var(--red)'
-      var title = pct >= 80 ? '&#127881; Excellent !' : pct >= 50 ? '&#128077; Bien joué !' : '&#128170; Continue !'
-      var sub   = pct >= 80 ? 'Tu maîtrises vraiment bien ce sujet.'
-                : pct >= 50 ? 'Encore un peu de pratique et tu seras au top.'
-                : "Reviens t'entraîner, tu vas y arriver !"
+      document.body.style.overflow = ''
+      var total      = questions.length
+      var pct        = total > 0 ? Math.round(correct * 100 / total) : 0
+      var color      = pct >= 80 ? 'var(--green)' : pct >= 50 ? '#F59E0B' : 'var(--red)'
+      var headline   = pct >= 80 ? '&#127881; Excellent !' : pct >= 50 ? '&#128077; Bien joué !' : '&#128170; Continue !'
+      var sub        = pct >= 80 ? 'Tu maîtrises vraiment bien ce sujet.'
+                     : pct >= 50 ? 'Encore un peu de pratique et tu seras au top.'
+                     : "Reviens t'entraîner, tu vas y arriver !"
       var r = 54, c = 2 * Math.PI * r, f = c * (pct / 100)
       var svg = '<svg width="160" height="160" viewBox="0 0 160 160" style="position:absolute;top:-10px;left:-10px">'
         + '<circle cx="80" cy="80" r="' + r + '" fill="none" stroke="var(--variant)" stroke-width="10"/>'
@@ -196,17 +310,22 @@ button:active{transform:scale(.97)}
       var storeLbl = isIOS ? 'App Store' : 'Google Play'
 
       show(
-        '<div style="display:flex;justify-content:center;margin:8px 0">'
-        + '<div class="scircle"><div style="position:relative">' + svg
+        '<div style="display:flex;flex-direction:column;align-items:center;padding:32px 0 20px">'
+        + '<img src="/logo.png" alt="Memoory" style="width:72px;height:72px;border-radius:18px;object-fit:cover;flex-shrink:0">'
+        + '<div style="margin-top:12px;font-size:24px;font-weight:700;color:var(--primary)">Memoory</div>'
+        + '</div>'
+        + '<div style="display:flex;justify-content:center;margin:8px 0">'
+        + '<div class="scircle">' + svg
+        + '<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center">'
         + '<div style="font-size:26px;font-weight:800;color:' + color + '">' + correct + '/' + total + '</div>'
         + '<div style="font-size:13px;font-weight:600;color:' + color + '">' + pct + '%</div>'
         + '</div></div></div>'
-        + '<h2 style="text-align:center;margin:12px 0 4px">' + title + '</h2>'
+        + '<h2 style="text-align:center;margin:12px 0 4px">' + headline + '</h2>'
         + '<p style="text-align:center;color:var(--sub);font-size:14px;margin-bottom:20px">' + esc(sub) + '</p>'
         + '<button class="btn-outline" id="replay">&#8635;  Rejouer</button>'
         + '<div class="divider" style="margin:20px 0"></div>'
         + '<p style="text-align:center;color:var(--sub);font-size:13px;margin-bottom:12px">Envie de t\'entraîner encore plus ?</p>'
-        + '<button class="btn-store" id="store">Télécharger l\'app — ' + storeLbl + '</button>'
+        + '<button class="btn-primary" id="store">Télécharger l\'app — ' + storeLbl + '</button>'
       )
       document.getElementById('replay').onclick = function() { correct = 0; showQ(0) }
       document.getElementById('store').onclick  = function() { window.open(storeUrl, '_blank') }
